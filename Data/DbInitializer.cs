@@ -8,7 +8,7 @@ class DbInitializer
 {
     public static void Initialize(ReservationContext context){
         context.Database.EnsureCreated();
-        // Look for any reservations.
+        // Look for any users.
         if (context.Users.Any())
         {
             return;   // DB has been seeded
@@ -60,11 +60,17 @@ class DbInitializer
             new SportObject{Name="Dvorana 2", Capacity= 2, Location="Naslov"},
             new SportObject{Name="Dvorana 3", Capacity= 3, Location="Naslov"}
         };
+        foreach (SportObject s in sportObjects){
+            context.SportObjects.Add(s);
+        }
         context.SaveChanges();
 
         var reservations = new Reservation[]{
             new Reservation{ User=user, Date=DateTime.Parse("2024-11-11"), ReservationDate=DateTime.Parse("2024-12-3 13:00:00"), DurationInHours=1}
         };
+        foreach (Reservation r in reservations){
+            context.Reservations.Add(r);
+        }
         context.SaveChanges();
 
     }
