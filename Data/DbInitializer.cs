@@ -34,7 +34,7 @@ class DbInitializer
             context.Users.Add(user);
             
         }
-
+        context.SaveChanges();
         var roles = new IdentityRole[] {
             new IdentityRole{Id="1", Name="Administrator"},
             new IdentityRole{Id="2", Name="Manager"},
@@ -60,10 +60,12 @@ class DbInitializer
             new SportObject{Name="Dvorana 2", Capacity= 2, Location="Naslov"},
             new SportObject{Name="Dvorana 3", Capacity= 3, Location="Naslov"}
         };
+        context.SaveChanges();
 
         var reservations = new Reservation[]{
             new Reservation{ User=user, Date=DateTime.Parse("2024-11-11"), ReservationDate=DateTime.Parse("2024-12-3 13:00:00"), DurationInHours=1}
         };
+        context.SaveChanges();
 
     }
 }
