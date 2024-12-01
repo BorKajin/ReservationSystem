@@ -9,4 +9,8 @@ public class SportObject
     public int Capacity {get; set;}
 
     public ICollection<Reservation> Reservations {get; set;}
+
+    public SportObject(){
+        Reservations = [];
+    }
 }

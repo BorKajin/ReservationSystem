@@ -8,4 +8,9 @@ public class ApplicationUser : IdentityUser
     public string? LastName { get; set; }
 
     public ICollection<Reservation> Reservations {get; set;}
+
+    public ApplicationUser()
+    {
+        Reservations = [];
+    }
 }
