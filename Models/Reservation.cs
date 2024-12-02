@@ -5,7 +5,6 @@ namespace ReservationSystem.Models;
 
 public class Reservation
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [Display(Name = "Number")]
     public int ID {get; set;}
 
@@ -16,4 +15,8 @@ public class Reservation
     public int DurationInHours {get; set;}
 
     public ApplicationUser? User {get; set;}
+
+    [Required]
+    public int SportObjectID {get; set;}
+    public SportObject? SportObject {get; set;}
 }

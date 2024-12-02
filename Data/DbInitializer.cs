@@ -32,7 +32,6 @@ class DbInitializer
             var hashed = password.HashPassword(user,"Testni123!");
             user.PasswordHash = hashed;
             context.Users.Add(user);
-            
         }
         context.SaveChanges();
         var roles = new IdentityRole[] {
@@ -66,7 +65,7 @@ class DbInitializer
         context.SaveChanges();
 
         var reservations = new Reservation[]{
-            new Reservation{ User=user, Date=DateTime.Parse("2024-11-11"), ReservationDate=DateTime.Parse("2024-12-3 13:00:00"), DurationInHours=1}
+            new Reservation{ User=user, SportObject=sportObjects[1], Date=DateTime.Parse("2024-11-11"), ReservationDate=DateTime.Parse("2024-12-3 13:00:00"), DurationInHours=1}
         };
         foreach (Reservation r in reservations){
             context.Reservations.Add(r);
