@@ -21,6 +21,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.DurationInHours)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SportObject)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -35,6 +38,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DurationInHours)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SportObject.Name)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

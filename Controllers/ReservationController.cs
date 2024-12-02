@@ -24,7 +24,8 @@ namespace ReservationSystem.Controllers
         // GET: Reservation
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Reservations.ToListAsync());
+            var reservationContext = _context.Reservations.Include(r => r.SportObject);
+            return View(await reservationContext.ToListAsync());
         }
 
         // GET: Reservation/Details/5
@@ -36,6 +37,7 @@ namespace ReservationSystem.Controllers
             }
 
             var reservation = await _context.Reservations
+                .Include(r => r.SportObject)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (reservation == null)
             {
@@ -48,6 +50,7 @@ namespace ReservationSystem.Controllers
         // GET: Reservation/Create
         public IActionResult Create()
         {
+            ViewData["SportObjectID"] = new SelectList(_context.SportObjects, "ID", "Name");
             return View();
         }
 
@@ -56,14 +59,16 @@ namespace ReservationSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Date,ReservationDate,DurationInHours")] Reservation reservation)
+        public async Task<IActionResult> Create([Bind("ID,ReservationDate,DurationInHours,SportObjectID")] Reservation reservation)
         {
+            reservation.Date = DateTime.Now;
             if (ModelState.IsValid)
             {
                 _context.Add(reservation);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["SportObjectID"] = new SelectList(_context.SportObjects, "ID", "Name", reservation.SportObjectID);
             return View(reservation);
         }
 
@@ -80,6 +85,7 @@ namespace ReservationSystem.Controllers
             {
                 return NotFound();
             }
+            ViewData["SportObjectID"] = new SelectList(_context.SportObjects, "ID", "ID", reservation.SportObjectID);
             return View(reservation);
         }
 
@@ -88,7 +94,7 @@ namespace ReservationSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Date,ReservationDate,DurationInHours")] Reservation reservation)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Date,ReservationDate,DurationInHours,SportObjectID")] Reservation reservation)
         {
             if (id != reservation.ID)
             {
@@ -115,6 +121,7 @@ namespace ReservationSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["SportObjectID"] = new SelectList(_context.SportObjects, "ID", "ID", reservation.SportObjectID);
             return View(reservation);
         }
 
@@ -127,6 +134,7 @@ namespace ReservationSystem.Controllers
             }
 
             var reservation = await _context.Reservations
+                .Include(r => r.SportObject)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (reservation == null)
             {

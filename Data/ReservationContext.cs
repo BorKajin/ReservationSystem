@@ -17,7 +17,11 @@ public class ReservationContext : IdentityDbContext<ApplicationUser>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Reservation>().ToTable("Reservation");
+        modelBuilder.Entity<Reservation>()
+            .HasOne(r => r.SportObject)
+            .WithMany(s => s.Reservations)
+            .HasForeignKey(r => r.SportObjectID)
+            .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<SportObject>().ToTable("SportObject");
     }
 }
