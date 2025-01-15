@@ -17,7 +17,7 @@ namespace ReservationSystem.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("ProductVersion", "8.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -238,6 +238,9 @@ namespace ReservationSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<bool>("Aproved")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -251,6 +254,7 @@ namespace ReservationSystem.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
@@ -281,7 +285,12 @@ namespace ReservationSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("ID");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("SportObject", (string)null);
                 });
@@ -347,9 +356,20 @@ namespace ReservationSystem.Migrations
 
                     b.HasOne("ReservationSystem.Models.ApplicationUser", "User")
                         .WithMany("Reservations")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("SportObject");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ReservationSystem.Models.SportObject", b =>
+                {
+                    b.HasOne("ReservationSystem.Models.ApplicationUser", "User")
+                        .WithMany("SportObjects")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -357,6 +377,8 @@ namespace ReservationSystem.Migrations
             modelBuilder.Entity("ReservationSystem.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Reservations");
+
+                    b.Navigation("SportObjects");
                 });
 
             modelBuilder.Entity("ReservationSystem.Models.SportObject", b =>

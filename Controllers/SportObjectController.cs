@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,16 +15,21 @@ namespace ReservationSystem.Controllers
     public class SportObjectController : Controller
     {
         private readonly ReservationContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public SportObjectController(ReservationContext context)
+        public SportObjectController(ReservationContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: SportObject
         public async Task<IActionResult> Index()
         {
-            return View(await _context.SportObjects.ToListAsync());
+            IQueryable<SportObject> sportObjectContext =
+                _context.SportObjects
+                    .Include(s => s.User);
+            return View(await sportObjectContext.ToListAsync());
         }
 
         // GET: SportObject/Details/5
@@ -52,10 +59,13 @@ namespace ReservationSystem.Controllers
         // POST: SportObject/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Administrator, Manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Name,Location,Capacity")] SportObject sportObject)
         {
+            sportObject.User = await _userManager.GetUserAsync(User);
+            sportObject.UserId = sportObject.User.Id;
             if (ModelState.IsValid)
             {
                 _context.Add(sportObject);
@@ -86,7 +96,7 @@ namespace ReservationSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Location,Capacity")] SportObject sportObject)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Location,Capacity,UserId")] SportObject sportObject)
         {
             if (id != sportObject.ID)
             {
@@ -113,6 +123,7 @@ namespace ReservationSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["UserId"] = sportObject.UserId;
             return View(sportObject);
         }
 

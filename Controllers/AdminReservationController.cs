@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,31 +11,24 @@ using ReservationSystem.Models;
 
 namespace ReservationSystem.Controllers
 {
-    [Authorize]
-    public class ReservationController : Controller
+    [Authorize(Roles ="Administrator, Manager")]
+    public class AdminReservationController : Controller
     {
         private readonly ReservationContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ReservationController(ReservationContext context, UserManager<ApplicationUser> userManager)
+        public AdminReservationController(ReservationContext context)
         {
             _context = context;
-            _userManager = userManager;
         }
 
-        // GET: Reservation
+        // GET: AdminReservation
         public async Task<IActionResult> Index()
         {
-            var userId = _userManager.GetUserId(User);
-            IQueryable<Reservation> reservationContext =
-                _context.Reservations
-                    .Where(r => r.UserId.Equals(userId))
-                    .Include(r => r.SportObject)
-                    .Include(r => r.User);
+            var reservationContext = _context.Reservations.Include(r => r.SportObject).Include(r => r.User);
             return View(await reservationContext.ToListAsync());
         }
 
-        // GET: Reservation/Details/5
+        // GET: AdminReservation/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -56,43 +48,8 @@ namespace ReservationSystem.Controllers
             return View(reservation);
         }
 
-        // GET: Reservation/Create
-        public IActionResult Create()
-        {
-            ViewData["SportObjectID"] = new SelectList(_context.SportObjects, "ID", "ID");
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
-        }
 
-        // POST: Reservation/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Date,ReservationDate,DurationInHours,SportObjectID,UserId")] Reservation reservation)
-        {
-            reservation.Date = DateTime.Now;
-            var user = await _userManager.GetUserAsync(User);
-            reservation.UserId = user.Id;
-            Console.WriteLine(user.Id);
-            reservation.Aproved = false;
-            if (ModelState.IsValid)
-            {
-                _context.Add(reservation);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            } else{
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine(error.ErrorMessage);
-                }
-            }
-            ViewData["SportObjectID"] = new SelectList(_context.SportObjects, "ID", "Name", reservation.SportObjectID);
-            ViewData["UserId"] = user.Id;
-            return View(reservation);
-        }
-
-        // GET: Reservation/Edit/5
+        // GET: AdminReservation/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -105,24 +62,21 @@ namespace ReservationSystem.Controllers
             {
                 return NotFound();
             }
-            ViewData["SportObjectID"] = new SelectList(_context.SportObjects, "ID", "ID", reservation.SportObjectID);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", reservation.UserId);
             return View(reservation);
         }
 
-        // POST: Reservation/Edit/5
+        // POST: AdminReservation/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,ReservationDate,DurationInHours,SportObjectID,UserId,Date,Aproved")] Reservation reservation)
         {
-            Console.WriteLine(reservation.UserId);
             if (id != reservation.ID)
             {
                 return NotFound();
             }
-
+            Console.WriteLine(reservation.UserId);
             if (ModelState.IsValid)
             {
                 try
@@ -148,14 +102,15 @@ namespace ReservationSystem.Controllers
                     Console.WriteLine(error.ErrorMessage);
                 }
             }
-            ViewData["SportObjectID"] = new SelectList(_context.SportObjects, "ID", "Name", reservation.SportObjectID);
+            ViewData["SportObjectID"] = reservation.SportObjectID;
             ViewData["UserId"] = reservation.UserId;
-            ViewData["Aproved"] = reservation.Aproved;
             ViewData["Date"] = reservation.Date;
+            ViewData["ReservationDate"] = reservation.Date;
+            ViewData["DurationInHours"] = reservation.Date;
             return View(reservation);
         }
 
-        // GET: Reservation/Delete/5
+        // GET: AdminReservation/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -175,7 +130,7 @@ namespace ReservationSystem.Controllers
             return View(reservation);
         }
 
-        // POST: Reservation/Delete/5
+        // POST: AdminReservation/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

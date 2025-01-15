@@ -37,7 +37,6 @@ class DbInitializer
         var roles = new IdentityRole[] {
             new IdentityRole{Id="1", Name="Administrator"},
             new IdentityRole{Id="2", Name="Manager"},
-            new IdentityRole{Id="3", Name="Staff"}
         };
         foreach (IdentityRole r in roles)
         {
@@ -65,7 +64,7 @@ class DbInitializer
         context.SaveChanges();
 
         var reservations = new Reservation[]{
-            new Reservation{ User=user, SportObject=sportObjects[1], Date=DateTime.Parse("2024-11-11"), ReservationDate=DateTime.Parse("2024-12-3 13:00:00"), DurationInHours=1}
+            new Reservation{ User=user,UserId=user.Id, SportObject=sportObjects[1], SportObjectID=sportObjects[1].ID, Date=DateTime.Parse("2024-11-11"), ReservationDate=DateTime.Parse("2024-12-3 13:00:00"), DurationInHours=1}
         };
         foreach (Reservation r in reservations){
             context.Reservations.Add(r);

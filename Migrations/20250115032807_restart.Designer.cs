@@ -12,15 +12,15 @@ using ReservationSystem.Data;
 namespace ReservationSystem.Migrations
 {
     [DbContext(typeof(ReservationContext))]
-    [Migration("20241127222257_Initial")]
-    partial class Initial
+    [Migration("20250115032807_restart")]
+    partial class restart
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("ProductVersion", "8.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -236,7 +236,13 @@ namespace ReservationSystem.Migrations
             modelBuilder.Entity("ReservationSystem.Models.Reservation", b =>
                 {
                     b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<bool>("Aproved")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -247,10 +253,11 @@ namespace ReservationSystem.Migrations
                     b.Property<DateTime>("ReservationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("SportObjectID")
+                    b.Property<int>("SportObjectID")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
@@ -259,7 +266,7 @@ namespace ReservationSystem.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reservation", (string)null);
+                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("ReservationSystem.Models.SportObject", b =>
@@ -281,7 +288,12 @@ namespace ReservationSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("ID");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("SportObject", (string)null);
                 });
@@ -339,12 +351,27 @@ namespace ReservationSystem.Migrations
 
             modelBuilder.Entity("ReservationSystem.Models.Reservation", b =>
                 {
-                    b.HasOne("ReservationSystem.Models.SportObject", null)
+                    b.HasOne("ReservationSystem.Models.SportObject", "SportObject")
                         .WithMany("Reservations")
-                        .HasForeignKey("SportObjectID");
+                        .HasForeignKey("SportObjectID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ReservationSystem.Models.ApplicationUser", "User")
                         .WithMany("Reservations")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SportObject");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ReservationSystem.Models.SportObject", b =>
+                {
+                    b.HasOne("ReservationSystem.Models.ApplicationUser", "User")
+                        .WithMany("SportObjects")
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
@@ -353,6 +380,8 @@ namespace ReservationSystem.Migrations
             modelBuilder.Entity("ReservationSystem.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Reservations");
+
+                    b.Navigation("SportObjects");
                 });
 
             modelBuilder.Entity("ReservationSystem.Models.SportObject", b =>

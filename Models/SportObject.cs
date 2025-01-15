@@ -8,6 +8,9 @@ public class SportObject
     public string Location {get; set;}
     public int Capacity {get; set;}
 
+    public ApplicationUser? User {get; set;}
+    public String? UserId {get; set;}
+
     public ICollection<Reservation> Reservations {get; set;}
 
     public SportObject(){

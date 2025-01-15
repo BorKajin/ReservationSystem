@@ -6,7 +6,7 @@ using ReservationSystem.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // nastavi spremenljivko connectionString za .useSqlServer(connectionString)
-var connectionString = builder.Configuration.GetConnectionString("AzureContext");
+var connectionString = builder.Configuration.GetConnectionString("LocalContext");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -19,6 +19,7 @@ builder.Services.AddDbContext<ReservationContext>(options =>
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ReservationContext>();
+builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 using(var scope = app.Services.CreateScope())
@@ -37,7 +38,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+});
 app.UseRouting();
 
 app.UseAuthorization();
