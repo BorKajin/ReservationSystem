@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReservationSystem.Data;
 using ReservationSystem.Models;
+using ReservationSystem.Filters;
 
-namespace ReservationSystem.Controllers_Api
+namespace ReservationSystem.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -45,6 +46,7 @@ namespace ReservationSystem.Controllers_Api
         // PUT: api/SportObjectApi/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [ApiKeyAuth]
         public async Task<IActionResult> PutSportObject(int id, SportObject sportObject)
         {
             if (id != sportObject.ID)
@@ -76,6 +78,7 @@ namespace ReservationSystem.Controllers_Api
         // POST: api/SportObjectApi
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [ApiKeyAuth]
         public async Task<ActionResult<SportObject>> PostSportObject(SportObject sportObject)
         {
             _context.SportObjects.Add(sportObject);
@@ -86,6 +89,7 @@ namespace ReservationSystem.Controllers_Api
 
         // DELETE: api/SportObjectApi/5
         [HttpDelete("{id}")]
+        [ApiKeyAuth]
         public async Task<IActionResult> DeleteSportObject(int id)
         {
             var sportObject = await _context.SportObjects.FindAsync(id);

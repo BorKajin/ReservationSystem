@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReservationSystem.Data;
 using ReservationSystem.Models;
+using ReservationSystem.Filters;
 
-namespace ReservationSystem.Controllers_Api
+namespace ReservationSystem.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiKeyAuth]
     public class ReservationApiController : ControllerBase
     {
         private readonly ReservationContext _context;
