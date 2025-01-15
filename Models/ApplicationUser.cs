@@ -9,8 +9,11 @@ public class ApplicationUser : IdentityUser
 
     public ICollection<Reservation> Reservations {get; set;}
 
+    public ICollection<SportObject> SportObjects {get; set;}
+
     public ApplicationUser()
     {
         Reservations = [];
+        SportObjects = [];
     }
 }

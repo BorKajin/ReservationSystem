@@ -16,10 +16,9 @@ public class Reservation
 
     public int DurationInHours {get; set;}
 
-    public String UserId {get; set;} = "";
+    public String UserId {get; set;}
     public ApplicationUser? User {get; set;}
 
-    [Required]
     public int SportObjectID {get; set;}
     public SportObject? SportObject {get; set;}
 }

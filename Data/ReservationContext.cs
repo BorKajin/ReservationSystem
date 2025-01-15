@@ -18,12 +18,7 @@ public class ReservationContext : IdentityDbContext<ApplicationUser>
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Reservation>()
-            .HasOne(r => r.SportObject)
-            .WithMany(s => s.Reservations)
-            .HasForeignKey(r => r.SportObjectID)
-            .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<Reservation>()
-            .HasOne(r => r.User)
+            .HasOne<ApplicationUser>(r => r.User)
             .WithMany(u => u.Reservations)
             .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.Cascade);

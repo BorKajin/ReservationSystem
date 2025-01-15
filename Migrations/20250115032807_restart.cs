@@ -53,21 +53,6 @@ namespace ReservationSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SportObject",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Capacity = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SportObject", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -174,6 +159,27 @@ namespace ReservationSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SportObject",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Capacity = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SportObject", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_SportObject_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Reservations",
                 columns: table => new
                 {
@@ -181,8 +187,9 @@ namespace ReservationSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReservationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Aproved = table.Column<bool>(type: "bit", nullable: false),
                     DurationInHours = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     SportObjectID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -192,7 +199,8 @@ namespace ReservationSystem.Migrations
                         name: "FK_Reservations_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reservations_SportObject_SportObjectID",
                         column: x => x.SportObjectID,
@@ -249,6 +257,11 @@ namespace ReservationSystem.Migrations
                 name: "IX_Reservations_UserId",
                 table: "Reservations",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SportObject_UserId",
+                table: "SportObject",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -276,10 +289,10 @@ namespace ReservationSystem.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "SportObject");
 
             migrationBuilder.DropTable(
-                name: "SportObject");
+                name: "AspNetUsers");
         }
     }
 }

@@ -12,15 +12,15 @@ using ReservationSystem.Data;
 namespace ReservationSystem.Migrations
 {
     [DbContext(typeof(ReservationContext))]
-    [Migration("20250114175748_updatedReservationModel")]
-    partial class updatedReservationModel
+    [Migration("20250115032807_restart")]
+    partial class restart
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("ProductVersion", "8.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -288,7 +288,12 @@ namespace ReservationSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("ID");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("SportObject", (string)null);
                 });
@@ -363,9 +368,20 @@ namespace ReservationSystem.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ReservationSystem.Models.SportObject", b =>
+                {
+                    b.HasOne("ReservationSystem.Models.ApplicationUser", "User")
+                        .WithMany("SportObjects")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ReservationSystem.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Reservations");
+
+                    b.Navigation("SportObjects");
                 });
 
             modelBuilder.Entity("ReservationSystem.Models.SportObject", b =>
