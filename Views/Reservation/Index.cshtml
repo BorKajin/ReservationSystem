@@ -19,7 +19,13 @@
                 @Html.DisplayNameFor(model => model.ReservationDate)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Aproved)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.DurationInHours)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.SportObject)
@@ -37,10 +43,17 @@
                 @Html.DisplayFor(modelItem => item.ReservationDate)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Aproved)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.DurationInHours)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SportObject.Name)
+                @Html.DisplayFor(modelItem => item.User.FirstName)
+                @Html.DisplayFor(modelItem => item.User.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SportObject.ID)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

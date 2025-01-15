@@ -12,8 +12,8 @@ using ReservationSystem.Data;
 namespace ReservationSystem.Migrations
 {
     [DbContext(typeof(ReservationContext))]
-    [Migration("20241202092737_removed-manual-key")]
-    partial class removedmanualkey
+    [Migration("20250114192221_updatedContext")]
+    partial class updatedContext
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -241,6 +241,9 @@ namespace ReservationSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<bool>("Aproved")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -254,6 +257,7 @@ namespace ReservationSystem.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
@@ -350,7 +354,9 @@ namespace ReservationSystem.Migrations
 
                     b.HasOne("ReservationSystem.Models.ApplicationUser", "User")
                         .WithMany("Reservations")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("SportObject");
 

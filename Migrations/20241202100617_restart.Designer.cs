@@ -12,8 +12,8 @@ using ReservationSystem.Data;
 namespace ReservationSystem.Migrations
 {
     [DbContext(typeof(ReservationContext))]
-    [Migration("20241202085554_Foreign-key")]
-    partial class Foreignkey
+    [Migration("20241202100617_restart")]
+    partial class restart
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -236,7 +236,10 @@ namespace ReservationSystem.Migrations
             modelBuilder.Entity("ReservationSystem.Models.Reservation", b =>
                 {
                     b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");

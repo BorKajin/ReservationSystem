@@ -12,8 +12,8 @@ using ReservationSystem.Data;
 namespace ReservationSystem.Migrations
 {
     [DbContext(typeof(ReservationContext))]
-    [Migration("20241127222257_Initial")]
-    partial class Initial
+    [Migration("20250114175748_updatedReservationModel")]
+    partial class updatedReservationModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -236,7 +236,13 @@ namespace ReservationSystem.Migrations
             modelBuilder.Entity("ReservationSystem.Models.Reservation", b =>
                 {
                     b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<bool>("Aproved")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -247,10 +253,11 @@ namespace ReservationSystem.Migrations
                     b.Property<DateTime>("ReservationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("SportObjectID")
+                    b.Property<int>("SportObjectID")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
@@ -259,7 +266,7 @@ namespace ReservationSystem.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reservation", (string)null);
+                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("ReservationSystem.Models.SportObject", b =>
@@ -339,13 +346,19 @@ namespace ReservationSystem.Migrations
 
             modelBuilder.Entity("ReservationSystem.Models.Reservation", b =>
                 {
-                    b.HasOne("ReservationSystem.Models.SportObject", null)
+                    b.HasOne("ReservationSystem.Models.SportObject", "SportObject")
                         .WithMany("Reservations")
-                        .HasForeignKey("SportObjectID");
+                        .HasForeignKey("SportObjectID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ReservationSystem.Models.ApplicationUser", "User")
                         .WithMany("Reservations")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SportObject");
 
                     b.Navigation("User");
                 });

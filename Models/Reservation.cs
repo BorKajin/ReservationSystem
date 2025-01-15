@@ -12,8 +12,11 @@ public class Reservation
 
     public DateTime ReservationDate {get; set;}
 
+    public bool Aproved {get; set;} = false;
+
     public int DurationInHours {get; set;}
 
+    public String UserId {get; set;} = "";
     public ApplicationUser? User {get; set;}
 
     [Required]

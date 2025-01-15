@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ReservationSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class restart : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -174,29 +174,31 @@ namespace ReservationSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reservation",
+                name: "Reservations",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "int", nullable: false),
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReservationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DurationInHours = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    SportObjectID = table.Column<int>(type: "int", nullable: true)
+                    SportObjectID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reservation", x => x.ID);
+                    table.PrimaryKey("PK_Reservations", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Reservation_AspNetUsers_UserId",
+                        name: "FK_Reservations_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Reservation_SportObject_SportObjectID",
+                        name: "FK_Reservations_SportObject_SportObjectID",
                         column: x => x.SportObjectID,
                         principalTable: "SportObject",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -239,13 +241,13 @@ namespace ReservationSystem.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reservation_SportObjectID",
-                table: "Reservation",
+                name: "IX_Reservations_SportObjectID",
+                table: "Reservations",
                 column: "SportObjectID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reservation_UserId",
-                table: "Reservation",
+                name: "IX_Reservations_UserId",
+                table: "Reservations",
                 column: "UserId");
         }
 
@@ -268,7 +270,7 @@ namespace ReservationSystem.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Reservation");
+                name: "Reservations");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
